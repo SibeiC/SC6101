@@ -491,6 +491,7 @@
 
 % The IEEE uses Times Roman font, so we'll default to Times.
 % These three commands make up the entire times.sty package.
+\usepackage[T1]{fontenc}
 \renewcommand{\sfdefault}{phv}
 \renewcommand{\rmdefault}{ptm}
 \renewcommand{\ttdefault}{pcr}

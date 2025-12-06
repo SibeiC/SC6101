@@ -1,4 +1,4 @@
-\documentclass[conference]{IEEEtran}
+\documentclass[conference,nofonttune]{IEEEtran}
 \IEEEoverridecommandlockouts
 % The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
 \usepackage{cite}
@@ -7,60 +7,62 @@
 \usepackage{graphicx}
 \usepackage{textcomp}
 \usepackage{xcolor}
+% Times-compatible text and math fonts without missing TU/ptm shapes
+\usepackage{newtxtext,newtxmath}
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 
 \begin{document}
 
 \title{{Security/Privacy/Scalability issues in Title of Your Development Project}
-\thanks{Term Paper submitted for CE/CZ4153 Blockchain Technology, NTU.}
+    \thanks{Term Paper submitted for CE/CZ4153 Blockchain Technology, NTU.}
 }
 
-\author{\IEEEauthorblockN{Full Name of Student}
-\IEEEauthorblockA{Student'€™s Matriculation Number \\
-\textit{Name of Student's School}\\
-\textit{Nanyang Technological University}\\
-Singapore \\
-Email address of Student}
-\and
-\IEEEauthorblockN{Full Name of Student}
-\IEEEauthorblockA{Student's Matriculation Number \\
-\textit{Name of Student'€™s School}\\
-\textit{Nanyang Technological University}\\
-Singapore \\
-Email address of Student}
-\and
-\IEEEauthorblockN{Full Name of Student}
-\IEEEauthorblockA{Student's Matriculation Number \\
-\textit{Name of Student's School}\\
-\textit{Nanyang Technological University}\\
-Singapore \\
-Email address of Student}
+\author{\IEEEauthorblockN{Chen Sibei}
+    \IEEEauthorblockA{G2509013K \\
+        \textit{Graduate College}\\
+        \textit{Nanyang Technological University}\\
+        Singapore \\
+        SCHEN050@e.ntu.edu.sg}
+    \and
+    \IEEEauthorblockN{Full Name of Student}
+    \IEEEauthorblockA{Student's Matriculation Number \\
+        \textit{Name of Student's School}\\
+        \textit{Nanyang Technological University}\\
+        Singapore \\
+        Email address of Student}
+    \and
+    \IEEEauthorblockN{Full Name of Student}
+    \IEEEauthorblockA{Student's Matriculation Number \\
+        \textit{Name of Student's School}\\
+        \textit{Nanyang Technological University}\\
+        Singapore \\
+        Email address of Student}
 }
 
 \maketitle
 
 \begin{abstract}
-This is a template for the term paper of CE/CZ4153 Blockchain Technology course offered at the School of Computer Science and Engineering, Nanyang Technological University, Singapore. The paper should follow a similar style and format to incorporate all the necessary points of introduction, motivation, literature survey, observations, analysis, and solution to the issue. The paper should be 4 to 6 pages in length, including references. In case extra material is needed for analysis or arguments, the authors may include that as appendices, after the references.
+    This is a template for the term paper of CE/CZ4153 Blockchain Technology course offered at the School of Computer Science and Engineering, Nanyang Technological University, Singapore. The paper should follow a similar style and format to incorporate all the necessary points of introduction, motivation, literature survey, observations, analysis, and solution to the issue. The paper should be 4 to 6 pages in length, including references. In case extra material is needed for analysis or arguments, the authors may include that as appendices, after the references.
 \end{abstract}
 
 \begin{IEEEkeywords}
-blockchain, Ethereum, smart contracts, tokens, may be some more with respect to your specific issue and project.
+    blockchain, Ethereum, smart contracts, tokens, may be some more with respect to your specific issue and project.
 \end{IEEEkeywords}
 
 \section{Introduction}
 In this section, you should write a few paragraphs on blockchain (brief, can adapt from lectures, in your own words), the issues of security, privacy and scalability in blockchain (brief, can adapt from lectures, in your own words), what your development project topic was, and what you finally developed.
 
-You should also mention exactly which issue out of the three â€“ Security, Privacy, Scalability â€“ you are going to present, and what would be the overall contribution of this paper. Argument as why this issue is the most important is not required here.
+You should also mention exactly which issue out of the three -- Security, Privacy, Scalability -- you are going to present, and what would be the overall contribution of this paper. Argument as why this issue is the most important is not required here.
 
 \section{Motivation and Literature Survey}
 
 \subsection{Motivation}
 
-In this subsection, you should clearly argue which one of the three issues --€“ Security, Privacy, Scalability -- concerns you the most in case of the Decentralized Application you developed. You may refer to the lectures, invited talks, related works, or any other instance of similar development projects to argue this.
+In this subsection, you should clearly argue which one of the three issues -- Security, Privacy, Scalability -- concerns you the most in case of the Decentralized Application you developed. You may refer to the lectures, invited talks, related works, or any other instance of similar development projects to argue this.
 
 \subsection{Literature Survey}
-In this subsection, you should carefully curate similar works in the area of your interest, with proper citation (see references). This may include similar development projects or decentralized applications that have faced the same issues, lectures, articles, books or papers that talk about the issue in your case, or any other academic material related to your specific case. 
+In this subsection, you should carefully curate similar works in the area of your interest, with proper citation (see references). This may include similar development projects or decentralized applications that have faced the same issues, lectures, articles, books or papers that talk about the issue in your case, or any other academic material related to your specific case.
 
 \section{Observations and Analysis}
 In this section, start by listing your main observations on the issue you chose in case of your development project. In each case, discuss the major considerations, analyze their impact (and ramifications) on your decentralized application, and compare it with similar cases in the literature, if you found any such case.
@@ -75,7 +77,7 @@ There may be more than one issue per component. Think carefully to spot all such
 There may be more than one component with an issue. Think carefully to spot all such issues in your development project and write one subsection on each one of them. In case they are connected, do mention that too in this portion of your paper.
 
 \section{Proposed Solutions}
-In this section, propose potential solutions to address the issues that you found in your analysis earlier. These solutions may be inspired from the lectures, invited talks, related works, or any other instance of similar development projects. 
+In this section, propose potential solutions to address the issues that you found in your analysis earlier. These solutions may be inspired from the lectures, invited talks, related works, or any other instance of similar development projects.
 
 \subsection{Solution to Issue X}
 Identify potential solutions to this issue. Clearly mention how you would apply the solution to your development project, and if you have already applied the solution. Applying the solution is of course not mandatory for the development project.
@@ -87,14 +89,14 @@ Identify potential solutions to this issue. Clearly mention how you would apply 
 Identify potential solutions to this issue. Clearly mention how you would apply the solution to your development project, and if you have already applied the solution. Applying the solution is of course not mandatory for the development project. In case there exists no known solution to issue Z, propose a potential solution on your own, and argue why it may work.
 
 \section{Conclusion}
-In this section, you should mention exactly which issue out of the three --€“ Security, Privacy, Scalability -- you presented, and what is the overall contribution of this paper. The contribution may be in terms of your observations, analysis or proposed solutions presented for the issues and the components.
+In this section, you should mention exactly which issue out of the three -- Security, Privacy, Scalability -- you presented, and what is the overall contribution of this paper. The contribution may be in terms of your observations, analysis or proposed solutions presented for the issues and the components.
 
 You may follow the IEEE paper format for the Tables, Lists, Figures, References, etc. Keep the format uniform in the paper.
 
 \begin{thebibliography}{00}
-\bibitem{b1} A. Narayanan, J. Bonneau, E. W. Felten, A. Miller, and S. Goldfeder, ``Bitcoin and Cryptocurrency Technologies -- A Comprehensive Introduction,'' Princeton University Press 2016.
-\bibitem{b2} J. Bonneau, A. Miller, J. Clark, A. Narayanan, J. A. Kroll, and E. W. Felten, ``SoK: Research Perspectives and Challenges for Bitcoin and Cryptocurrencies,'' IEEE Symp. on Security and Privacy 2015: 104-121.
-\bibitem{b3} I. Eyal and E. Gun Sirer, ``Majority is not enough: Bitcoin mining is vulnerable,'' Financial Cryptography, 2014, pp. 436?454.
+    \bibitem{b1} A. Narayanan, J. Bonneau, E. W. Felten, A. Miller, and S. Goldfeder, ``Bitcoin and Cryptocurrency Technologies -- A Comprehensive Introduction,'' Princeton University Press 2016.
+    \bibitem{b2} J. Bonneau, A. Miller, J. Clark, A. Narayanan, J. A. Kroll, and E. W. Felten, ``SoK: Research Perspectives and Challenges for Bitcoin and Cryptocurrencies,'' IEEE Symp. on Security and Privacy 2015: 104-121.
+    \bibitem{b3} I. Eyal and E. Gun Sirer, ``Majority is not enough: Bitcoin mining is vulnerable,'' Financial Cryptography, 2014, pp. 436?454.
 \end{thebibliography}
 
 \end{document}
