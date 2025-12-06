@@ -1,6 +1,5 @@
 {
-    "latex-workshop.intellisense.package.enabled": true,
-    "latex-workshop.view.pdf.invert": 0,
+    "latex-workshop.formatting.latex": "latexindent",
     "editor.wordWrap": "on",
     "editor.formatOnSave": true
 }
