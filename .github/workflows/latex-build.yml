@@ -24,5 +24,5 @@ jobs:
               if: ${{ always() }}
               uses: actions/upload-artifact@v4
               with:
-                  name: paper-pdf
+                  name: paper.pdf
                   path: paper.pdf
