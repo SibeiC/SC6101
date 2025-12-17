@@ -19,3 +19,10 @@ jobs:
               uses: xu-cheng/latex-action@4.0.0
               with:
                   root_file: paper.tex
+
+            - name: Upload PDF artifact
+              if: ${{ always() }}
+              uses: actions/upload-artifact@v4
+              with:
+                  name: paper-pdf
+                  path: paper.pdf
