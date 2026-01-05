@@ -34,11 +34,11 @@
 
     \and
     \IEEEauthorblockN{Feng Jiahao}
-    \IEEEauthorblockA{Student's Matriculation Number \\
+    \IEEEauthorblockA{G2509193G \\
         \textit{Graduate College}\\
         \textit{Nanyang Technological University}\\
         Singapore \\
-        Email address of Student}\\
+        FENG0207@e.ntu.edu.sg}\\
     \IEEEauthorblockN{Tian Zhenman}
     \IEEEauthorblockA{Student's Matriculation Number \\
         \textit{Graduate College}\\
@@ -80,7 +80,25 @@ TODO: Introduction
 
 \subsection{Privacy Leakage Through Collateral and Liquidation Mechanisms}
 
-\subsection{Cross-Layer and Cross-Chain Correlation Attacks}
+\subsection{Cross-layer and Cross-chain Correlation (L2 and Bridges)}
+
+\textbf{Threat model.}
+Stablecoin users frequently move assets across Layer 1 (L1), Layer 2 (L2), and cross-chain bridges for payments, liquidity management, and settlement. These transfers are often routine and repeated, making them observable over time. We consider an adversary who can monitor public on-chain data across multiple blockchains, including bridge contract events and rollup batch submissions, and correlate these observations across domains.
+Beyond raw on-chain records, an adversary may also exploit coarse-grained external signals, such as transaction timing regularities and commonly followed transfer conventions. When combined, these signals strengthen cross-domain inference. Recent studies show that publicly available bridge and rollup data alone are sufficient to support large-scale linkage analysis across chains and layers, even without privileged access or insider information~\cite{ref1,ref2}.
+
+\textbf{Attack mechanisms.}
+The primary attack mechanism combines \emph{linkable anchors} with heuristic matching. Cross-chain bridges expose structured events (e.g., lock/mint or burn/release) that naturally connect transactions on different chains. When transactions exhibit similar timestamps, token types, and transfer amounts within a limited time window, attackers can match source- and destination-side transfers with high confidence, and further expand these links through address-level clustering and graph propagation~\cite{ref1,ref2}.  
+This risk is particularly pronounced for stablecoins, whose transfers often follow standardized denominations and repetitive usage patterns, making amount- and timing-based heuristics more effective. More generally, prior work shows that simple heuristics can become powerful in practice when users reuse addresses or follow predictable transaction routines, amplifying linkability at the entity level~\cite{ref3}.  
+In real-world settings, attribution may be further strengthened when linked transaction paths intersect with externally labeled entities (e.g., regulated on/off-ramps), which can act as additional anchoring points for identity inference. Industry analyses of illicit fund flows indicate that cross-chain routes are frequently used to fragment and reroute assets, paradoxically creating more observable linkage points for post hoc tracing~\cite{ref4}.
+
+\textbf{Impact.}
+Cross-domain linkability substantially weakens the practical privacy of stablecoin users. While individual transactions may appear innocuous in isolation, aggregated observations across L1, L2, and bridges can reveal sensitive commercial relationships, payment routines, and financial behaviors. Such exposure increases risks of competitive intelligence leakage, targeted surveillance, and user-level security threats.  
+At the same time, privacy-enhancing mechanisms that aim to provide strong anonymity at the transaction level face significant regulatory and legal uncertainty. Recent enforcement actions and subsequent legal developments surrounding Tornado Cash illustrate how compliance boundaries for privacy technologies can shift rapidly, complicating the deployment of privacy-heavy designs in mainstream stablecoin ecosystems~\cite{ref5}.
+
+\textbf{Mitigations.}
+Mitigation strategies generally follow two complementary directions. One approach is to reduce inherent linkability through design choices, such as batching bridge transactions, introducing controlled temporal delays, or standardizing transfer amounts. These techniques enlarge anonymity sets without modifying the underlying asset model. Limiting metadata exposure at rollup and RPC interfaces can further constrain cross-domain correlation.
+A second direction focuses on compliance-friendly privacy mechanisms, which are more suitable for stablecoins intended for large-scale adoption. Approaches based on selective disclosure and verifiable credentials allow users to demonstrate regulatory attributes—such as acceptable risk status or exclusion from sanction lists—without revealing complete transaction histories. This “privacy with accountability” paradigm is increasingly emphasized in both technical research and policy discussions as a pragmatic balance between confidentiality and AML/CFT requirements~\cite{ref6}.
+
 
 \subsection{Compliance-Driven Identity Disclosure}
 
@@ -101,6 +119,14 @@ TODO: Conclusion
     \bibitem{b1} A. Narayanan, J. Bonneau, E. W. Felten, A. Miller, and S. Goldfeder, ``Bitcoin and Cryptocurrency Technologies -- A Comprehensive Introduction,'' Princeton University Press 2016.
     \bibitem{b2} J. Bonneau, A. Miller, J. Clark, A. Narayanan, J. A. Kroll, and E. W. Felten, ``SoK: Research Perspectives and Challenges for Bitcoin and Cryptocurrencies,'' IEEE Symp. on Security and Privacy 2015: 104-121.
     \bibitem{b3} I. Eyal and E. Gun Sirer, ``Majority is not enough: Bitcoin mining is vulnerable,'' Financial Cryptography, 2014, pp. 436?454.
+ 
+    \bibitem{ref1} T. Yan, C. Huang, and C. J. Tessone, “Tracing Cross-Chain Transactions Between EVM-Based Blockchains: An Analysis of Ethereum-Polygon Bridges,” Ledger, vol. 10, pp. 113–134, 2025, doi: 10.5195/ledger.2025.433.
+    \bibitem{ref2} K. Yan et al., “An Empirical Study on Cross-chain Transactions: Costs, Inconsistencies, and Activities,” in Proc. ACM ASIA CCS ’25, 2025, doi: 10.1145/3708821.3733878.
+    \bibitem{ref3} M. Harrigan and C. Fretter, “The Unreasonable Effectiveness of Address Clustering,” arXiv:1605.06369, 2016.
+    \bibitem{ref4} Chainalysis, The 2025 Crypto Crime Report, 2025.
+    \bibitem{ref5} Reuters, “US scraps sanctions on Tornado Cash, crypto ‘mixer’ accused of laundering North Korea money,” Mar. 21, 2025.
+    \bibitem{ref6} D. Duffie, O. Olowookere, and A. Veneris, “The Stablecoin Balancing Act,” IMF Finance & Development, Sep. 2025.
+
 \end{thebibliography}
 
 \end{document}
