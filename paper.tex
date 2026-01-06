@@ -7,6 +7,7 @@
 \usepackage{graphicx}
 \usepackage{textcomp}
 \usepackage{xcolor}
+\usepackage{url}
 % Times-compatible text and math fonts without missing TU/ptm shapes
 \usepackage{newtxtext,newtxmath}
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
@@ -74,33 +75,43 @@
 \section{Introduction}
 TODO: Introduction
 
-\section{Privacy Issues in Stablecoins}
+\section{On-Chain Traceability and Address Linkability}
 
-\subsection{On-Chain Traceability and Address Linkability}
+\section{Privacy Leakage Through Collateral and Liquidation Mechanisms}
 
-\subsection{Privacy Leakage Through Collateral and Liquidation Mechanisms}
+\section{Cross-Layer and Cross-Chain Correlation Attacks}
 
-\subsection{Cross-Layer and Cross-Chain Correlation Attacks}
+\section{Compliance-Driven Identity Disclosure}
 
-\subsection{Compliance-Driven Identity Disclosure}
+Within digital asset markets, fiat-pegged stablecoins such as Tether (USDT) and USD Coin (USDC) have increasingly replaced direct fiat currency pairs as the dominant medium of exchange and settlement layer. Recent evidence suggests that stablecoin-denominated trading accounts for approximately 80\% of total cryptocurrency trading volume, underscoring their central role in the digital asset ecosystem \cite{waller2025,theblock2025}. This structural shift positions stablecoins as de factor on-ramps and off-ramps for digital assets, thereby amplifying concerns surrounding privacy erosion and compliance-driven control. In this section, we will use USDT as a case study, to examine the divergence between original design assumptions and current operational reality, followed by a discussion of proposed mitigation approaches.
 
-\section{Proposed Solutions}
+\subsection{Problem: Privacy, KYC, and Regulatory Drift in USDT}
 
-\subsection{Privacy-Preserving Transaction Mechanisms}
+USDT was originally proposed as a blockchain-based representation of fiat currency, designed to facilitate seamless peer-to-peer transactions without intermediaries \cite{tether2014}. However, over time, Tether Limited has increasingly adopted centralized control mechanisms, including Know Your Customer (KYC) protocols and transaction monitoring systems, ostensibly to comply with evolving regulatory requirements. This shift has led to a divergence between the original vision of USDT as a privacy-preserving digital asset and its current operational reality as a regulated financial instrument.
 
-\subsection{Secure Collateral and Liquidation Protocols}
+While USDT transactions are recorded on public blockchains, Tether Limited maintains the ability to freeze or blacklist addresses associated with illicit activities, effectively undermining the pseudonymous nature of blockchain transactions. Furthermore, the implementation of KYC procedures for USDT issuance and redemption introduces additional vectors for privacy leakage, as user identities can be linked to on-chain activities. These compliance measures are driven by regulatory frameworks such as FinCEN's guidance on virtual currencies \cite{finCEN2019}, FATF's risk-based approach to virtual assets \cite{fatf2021}, and OFAC's sanctions compliance guidance \cite{ofac2022}.
 
-\subsection{Mitigating Cross-Layer and Cross-Chain Correlations}
+Furthermore, despite originally deployed over the bitcoin blockchain via the Omni Layer protocol, USDT has since expanded to multiple blockchains, including Ethereum, Tron, and Solana. Each of these platforms has distinct privacy characteristics and regulatory compliance mechanisms, further complicating the privacy landscape for USDT users. The multi-chain deployment framented liquidity and complicated regulatory oversight, increasing reliance on off-chain intermediaries for compliance enforcement rather than deterministic compliance guarantees \cite{micar2023}.
 
-\subsection{Balancing Privacy and Regulatory Compliance}
+These factors collectively contribute to a complex privacy environment for USDT users, where the interplay between on-chain transparency and off-chain regulatory compliance creates significant challenges for maintaining user privacy. In the subsequent subsection, we will explore potential mitigation strategies and design trade-offs to address these challenges.
+
+\subsection{Mitigation Approaches and Design Trade-offs}
+
+Regulatory frameworks worldwide mandate KYC and AML compliance for financial service providers, including stablecoin issuers, making complete anonymity incompatible with legal operation in most jurisdictions. The challenge, therefore, is not to eliminate compliance requirements but to design systems that satisfy regulatory obligations while minimizing privacy intrusions. Existing literature proposes several approaches to achieve this balance.
+
+One approach embeds compliance verification mechanisms at the protocol layer of stablecoin systems. Recent work by Duffie et al. \cite{duffie2025} proposes that stablecoin architectures can reconcile strong privacy protections with regulatory obligations (including sanctions screening, KYC, AML, and CFT requirements) by integrating privacy-preserving verification directly into the distributed ledger design, thereby avoiding the current reliance on centralized off-chain intermediaries.
+
+A second approach leverages cryptographic techniques for selective disclosure, allowing users to prove compliance attributes without exposing underlying transaction data or identities. Baldimtsi et al. \cite{baldimtsi2024} systematize over a decade of privacy-preserving payment systems, examining how zero-knowledge proofs and related cryptographic methods enable different privacy guarantees ranging from confidentiality to k-anonymity and sender-receiver unlinkability. However, their analysis identifies a fundamental trilemma: existing systems cannot simultaneously achieve strong anonymity, scalable on-chain data growth, and efficient light-client verification. This limitation suggests that stablecoin designers must make explicit trade-offs between privacy strength, system scalability, and accessibility for resource-constrained users.
+
+A third category employs tiered or hybrid KYC models, as outlined in regulatory frameworks such as FATF's risk-based guidance \cite{fatf2021}. Under this approach, Virtual Asset Service Providers (VASPs) may apply lighter customer due diligence (CDD) procedures for occasional transactions below specified thresholds, such as the USD/EUR 1,000 benchmark in FATF guidance, while requiring full identification and enhanced due diligence for higher-value or higher-risk activities. However, recognizing the unique risk profile of virtual assets, including rapid global settlement and potential for anonymity, some jurisdictions opt to mandate comprehensive KYC regardless of transaction size. This flexibility allows regulatory regimes to calibrate privacy-compliance trade-offs based on jurisdiction-specific risk assessments.
+
+While no single approach fully resolves the fundamental privacy-regulation tension, these mechanisms suggest that future stablecoin architectures may achieve improved privacy without sacrificing regulatory compatibility, provided that design decisions appropriately balance competing policy objectives.
 
 \section{Conclusion}
 TODO: Conclusion
 
-\begin{thebibliography}{00}
-    \bibitem{b1} A. Narayanan, J. Bonneau, E. W. Felten, A. Miller, and S. Goldfeder, ``Bitcoin and Cryptocurrency Technologies -- A Comprehensive Introduction,'' Princeton University Press 2016.
-    \bibitem{b2} J. Bonneau, A. Miller, J. Clark, A. Narayanan, J. A. Kroll, and E. W. Felten, ``SoK: Research Perspectives and Challenges for Bitcoin and Cryptocurrencies,'' IEEE Symp. on Security and Privacy 2015: 104-121.
-    \bibitem{b3} I. Eyal and E. Gun Sirer, ``Majority is not enough: Bitcoin mining is vulnerable,'' Financial Cryptography, 2014, pp. 436?454.
-\end{thebibliography}
+% References are listed in the file named "references.bib"
+\bibliographystyle{IEEEtran}
+\bibliography{references}
 
 \end{document}
