@@ -133,10 +133,10 @@ Although on-chain clustering can only associate addresses with “entities,” n
 \begin{itemize}
 \item \textbf{"Time Tells All" Attack:}
 Wang et al. (2025) presented a de-anonymization attack targeting RPC users in a USENIX Security/CCS-level research paper. \cite{wang2025}
-\item \textbf{"P2P Topology Attacks:}
+\item \textbf{"P2P Topology" Attacks:}
 Early studies focused on message propagation delays at the P2P layer. 
 While the impact is mitigated for users relying on RPC, further research by Heimbach et al. (2025) demonstrated that by analyzing proof messages (Attestations) within TCP connections, the physical locations of over 15\% of Ethereum validator nodes could be identified.\cite{heimbach2025}
-\item \textbf{"Specific Leakage in ERC-20 Graphs:}
+\item \textbf{"Specific Leakage in ERC-20 Graphs":}
 The transfer patterns of stablecoins exhibit significant topological differences from native ETH patterns, providing entry points for specific analyses.
 Josenhans et al. (2025) noted in their analysis of ERC-20 scam token networks that the peel chain pattern—where large funds gradually diminish through successive transfers, akin to peeling an onion—is highly prevalent in token laundering. \cite{josenhans2025}
 Using graph embedding technology, researchers achieved 88.7\% accuracy in identifying anomalous token transfer networks. 
@@ -147,7 +147,7 @@ For stablecoins, this pattern typically indicates users attempting to obscure fu
 The combined application of the aforementioned attack mechanisms has resulted in stablecoin users facing a multidimensional collapse of privacy:
 
 \paragraph{Physical Identity Exposure}
-By combining CEX KYC data (obtained through deposit address reuse) with ISP IP data (obtained via RPC sidechannels), attackers can fully map on-chain pseudonyms to real-world legal entities.
+By combining CEX KYC data (obtained through deposit address reuse) with ISP IP data (obtained via RPC side-channels), attackers can fully map on-chain pseudonyms to real-world legal entities.
 
 \paragraph{Wealth and Behavior Insights}
 Reuter (2025) research demonstrates how on-chain behavioral analysis can map stablecoin flows to specific geographic regions. \cite{reuter2025}
@@ -160,7 +160,7 @@ When flagged stablecoin holders initiate transfers, MEV bots exploit the gas bid
 \subsubsection{Mitigations}
 To address these threats, the academic community and developer community have proposed various cryptography-based mitigation solutions, primarily focusing on stealth addresses and privacy pool technologies.
 
-\paragraph{MStealth Addresses}
+\paragraph{Stealth Addresses}
 Stealth addresses are designed to sever on-chain links between senders and recipients, preventing third parties from identifying who received the funds.
 \begin{itemize}
     \item \textbf{Mechanism Principle:} 
@@ -175,7 +175,7 @@ Stealth addresses are designed to sever on-chain links between senders and recip
 
 \paragraph{Privacy Pools}
 Following the sanctions imposed on Tornado Cash, Vitalik Buterin, Jacob Illum et al. 
-(2023) proposed the concept of “privacy pools” in an attempt to strike a balance between privacy and compliance\cite{sahu2024sede}.
+(2024) proposed the concept of “privacy pools” in an attempt to strike a balance between privacy and compliance\cite{buterin2024}.
 \begin{itemize}
     \item \textbf{Mechanism Principle:} 
     Privacy pools no longer pursue “full-set anonymity,” but instead introduce the concept of Association Sets. 
@@ -188,7 +188,7 @@ Following the sanctions imposed on Tornado Cash, Vitalik Buterin, Jacob Illum et
     \item \textbf{Anonymous Collection Fragmentation Risk:} 
     Academic circles express concern that this mechanism may lead to fragmentation of anonymity sets. 
     If each user selects different association sets, the scale (k-anonymity) of each set will significantly decrease, thereby reducing overall privacy protection. 
-    Furthermore, Buterin et al. (2023) also acknowledge that maintaining association sets introduces centralized or federated trust assumptions (who defines “good” and “bad”?), which could become a new point of entry for censorship \cite{buterin2023}.
+    Furthermore, Buterin et al. (2024) also acknowledge that maintaining association sets introduces centralized or federated trust assumptions (who defines “good” and “bad”?), which could become a new point of entry for censorship \cite{buterin2024}.
 \end{itemize}
 
 \section{Privacy Leakage Through Collateral and Liquidation Mechanisms}
