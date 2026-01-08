@@ -65,7 +65,7 @@
 \maketitle
 
 \begin{abstract}
-    As stable units of account and mediums of exchange, stablecoins are widely used in decentralized finance (DeFi). However, the processes of stablecoin trading and collateral management typically inherit the inherent transparency of public blockchains, posing significant privacy risks to both individual users and institutional participants. Given the widespread use of stablecoins in payment systems, payroll settlements, merchant settlements, over-the-counter (OTC) trading, and cross-border transfers, this paper considers privacy as a primary concern in stablecoin applications. In these areas, transaction correlation and identity inference can directly expose sensitive financial information. We examine key privacy challenges in the stablecoin ecosystem, including on-chain traceability and address correlation, privacy vulnerabilities arising from collateral and liquidation mechanisms, cross-layer and cross-chain data correlation, and regulatory compliance requirements (e.g., KYC/AML) that may conflict with user privacy expectations. We analyze relevant threat models and real-world impacts and propose comprehensive mitigation strategies that include cryptographic solutions (e.g., zero-knowledge proofs), protocol-level design improvements, wallet and user experience enhancements, and privacy-preserving compliance architectures tailored to each challenge.
+    As stable units of account and mediums of exchange, stablecoins are widely used in decentralized finance (DeFi). However, the processes of stablecoin trading and collateral management typically inherit the inherent transparency of public blockchains, posing significant privacy leakage to both individual users and institutional participants. Given the widespread use of stablecoins in payment systems, payroll settlements, merchant settlements, over-the-counter (OTC) trading, and cross-border transfers, this paper considers privacy as a primary concern in stablecoin applications. In these areas, transaction correlation and identity inference can directly expose sensitive financial information. We examine key privacy challenges in the stablecoin ecosystem, including on-chain traceability and address correlation, privacy vulnerabilities arising from collateral and liquidation mechanisms, cross-layer and cross-chain data correlation, and regulatory compliance requirements (e.g., KYC/AML) that may conflict with user privacy expectations. We analyze relevant threat models and real-world impacts and propose comprehensive mitigation strategies that include cryptographic solutions (e.g., zero-knowledge proofs), protocol-level design improvements, wallet and user experience enhancements, and privacy-preserving compliance architectures tailored to each challenge.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -78,17 +78,55 @@ Stablecoins have evolved from a niche payment tool to a core settlement layer fo
 Privacy challenges in stablecoins differ from those in Bitcoin-like systems in both technology and governance. On the technical side, most major stablecoins run in account-based environments on Ethereum-compatible networks. In practice, address reuse is widespread, and ERC-20 transfer events expose fine-grained metadata through on-chain logs.  These features enable powerful transaction-graph analysis and clustering and can be further strengthened by network-layer/RPC side channels. 
 On the institutional side, stablecoins often add actors with stronger surveillance and control capabilities than those found in permissionless cryptocurrencies. Centralized issuers and regulated intermediaries typically hold off-chain identity records collected through KYC, and many stablecoin contracts support administrative actions such as freezing or blacklisting. As a result, pseudonymity can be fragile even when users follow good on-chain hygiene. At the same time, stablecoin adoption is increasingly shaped by regulatory and compliance requirements—such as KYC/AML controls and sanctions screening—which can compel identity disclosure and widen the overall surveillance surface \cite{finCEN2019,fatf2021,ofac2021,micar2023}.
 
-This paper provides a structured analysis of stablecoin privacy breaches, focusing on the interplay between transparency and compliance requirements. We divide our discussion into four dimensions frequently encountered in real-world deployments and empirical studies. First, we examine on-chain traceability and address linkability, including clustering heuristics that map aliases to entities and side-channel attacks. Then, we analyze privacy breaches arising from collateralized stablecoin architectures, where vault status, liquidation thresholds, and auction mechanisms expose sensitive financial information that can be maliciously exploited. Third, we discuss cross-layer and cross-chain connections between L1/L2 layers and bridges, where bridging events and time/amount heuristics act as linkable anchors, connecting user activities across different domains. Fourth, we examine compliance-driven identity disclosure, using fiat-backed stablecoins as an example to demonstrate how regulatory changes and issuer privileges erode privacy over time.
+This paper provides a structured analysis of stablecoin privacy leakage, focusing on the interplay between transparency and compliance requirements. We divide our discussion into four dimensions frequently encountered in real-world deployments and empirical studies. First, we examine on-chain traceability and address linkability, including clustering heuristics that map aliases to entities and side-channel attacks. Then, we analyze privacy leakage arising from collateralized stablecoin architectures, where vault status, liquidation thresholds, and auction mechanisms expose sensitive financial information that can be maliciously exploited. Third, we discuss cross-layer and cross-chain connections between L1/L2 layers and bridges, where bridging events and time/amount heuristics act as linkable anchors, connecting user activities across different domains. Fourth, we examine compliance-driven identity disclosure, using fiat-backed stablecoins as an example to demonstrate how regulatory changes and issuer privileges erode privacy over time.
+
+\paragraph{Terminology and scope}
+In this paper, we use \emph{privacy leakage} as an umbrella term that covers (i) \emph{linkability} (linking addresses, users, and activities) and (ii) \emph{confidentiality loss} (exposure of amounts, positions, or relationships). We describe adversaries using a common threat-model vocabulary: a global on-chain observer (GPA), a network/RPC observer (NLA), and a privileged compliance actor (e.g., issuer/VASP). We also group impacts into four recurring dimensions: \emph{identity exposure}, \emph{financial exposure} (balances or positions), \emph{strategic exploitation} (e.g., MEV, liquidation sniping), and \emph{compliance/control risk} (freezing, blacklisting, censorship).
 
 Our contributions are threefold. (1) We define realistic threat models tailored to stablecoins, including both conventional global observers and privileged issuer/compliance adversaries. (2) We summarize representative attack and inference mechanisms across transfers, positions, and cross-domain movements, and highlight their privacy impacts on both retail and institutional users. (3) We survey mitigation directions that aim to balance privacy with accountability, including stealth address schemes, privacy pools with selective disclosure, and minimal-disclosure cryptographic proofs that preserve verifiable constraints while reducing data exposure \cite{baldimtsi2024,duffie2025}.
 
 The remainder of this paper is organized as follows. Section~II analyzes on-chain traceability and address linkability. Section~III discusses privacy leakage from collateral, liquidation, and position transparency. Section~IV examines cross-layer and cross-chain correlation for L2s and bridges. Section~V focuses on compliance-driven identity disclosure and design trade-offs. Section~VI concludes with open challenges and directions for privacy-preserving yet regulation-compatible stablecoin architectures.
 
+Table~\ref{tab:overview} provides an overview of the threat surfaces, typical impacts, and mitigation directions discussed in the following sections.
+
+\begin{table*}[t]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.15}
+\caption{Summary of stablecoin privacy risks, impacts, and mitigations}
+\label{tab:overview}
+\begin{tabular}{p{2.4cm} p{4.7cm} p{4.7cm} p{3.8cm}}
+\hline
+\textbf{Risk class} & \textbf{Main leakage channel} & \textbf{Typical impact} & \textbf{Mitigation direction} \\
+\hline
+On-chain traceability &
+ERC-20 logs, address reuse, clustering, RPC timing &
+Identity linkage, payment routine profiling, MEV targeting &
+Stealth addresses, privacy pools, RPC hygiene \\
+\hline
+Collateral \& liquidation transparency &
+Public vault states, thresholds, auctions, mempool observability &
+Position exposure, liquidation sniping, adverse execution &
+Minimal-disclosure proofs, auction design, commit--reveal \\
+\hline
+Cross-layer/cross-chain correlation &
+Bridge events as anchors, timing/amount matching &
+End-to-end path reconstruction, business relationship exposure &
+Batching/delays, metadata minimization, cross-domain privacy \\
+\hline
+Compliance-driven disclosure &
+KYC datasets, blacklist/freeze controls, sanctions screening &
+De-pseudonymization, censorship risk, selective freezing &
+Selective disclosure, verifiable credentials, compliant privacy \\
+\hline
+\end{tabular}
+\end{table*}
 
 \section{On-Chain Traceability and Address Linkability}
 Stablecoins on Ethereum and its compatible networks—primarily ERC-20 tokens such as USDC, USDT, and DAI—have become the cornerstone of the digital asset ecosystem. However, this convenience is built upon an extremely transparent architecture—the account-based model. Unlike Bitcoin's unspent transaction output (UTXO) model, the account-based model is designed to encourage address reuse and lacks a native change mechanism. This architectural characteristic, combined with the event logs mechanism of the ERC-20 standard, subjects stablecoin transactions to more severe privacy challenges than native cryptocurrencies.
 
-\subsection{Threat Models}
+\subsection{Threat Model}
 When analyzing stablecoin privacy, it is essential to first define the scope and perspective of an attacker's capabilities. The academic community typically categorizes adversaries targeting blockchain privacy into three tiers: global passive adversaries, network-layer adversaries, and centralized issuers/regulatory adversaries.
 
 \paragraph{Global Passive Adversary (GPA)}
@@ -96,7 +134,7 @@ GPA is assumed to possess a complete copy of the blockchain ledger (i.e., runnin
 \begin{itemize}
     \item \textbf{Capability:} The GPA constructs a complete transaction graph $G(V, E)$, where $V$ represents addresses and $E$ represents token or ETH transfers.
     \item \textbf{Goal:} To map multiple pseudonyms to a single real-world entity using clustering heuristics.
-    \item \textbf{Reality:} This model corresponds to blockchain analytics firms (e.g., Chainalysis) and academic researchers. Victor (2020) demonstrated that GPAs can effectively cluster Ethereum users by exploiting deposit address reuse \cite{victor2020}.
+    \item \textbf{Reality:} This model corresponds to blockchain analytics firms (e.g., Chainalysis) \cite{chainalysis2025} and academic researchers. Victor (2020) demonstrated that GPAs can effectively cluster Ethereum users by exploiting deposit address reuse \cite{victor2020}.
 \end{itemize}
 
 \paragraph{Network-Level Adversary (NLA)}
@@ -138,7 +176,7 @@ Although on-chain clustering can only associate addresses with “entities,” n
 Wang et al. (2025) presented a de-anonymization attack targeting RPC users in a USENIX Security/CCS-level research paper. \cite{wang2025}
 \item \textbf{"P2P Topology" Attacks:}
 Early studies focused on message propagation delays at the P2P layer. 
-While the impact is mitigated for users relying on RPC, further research by Heimbach et al. (2025) demonstrated that by analyzing proof messages (Attestations) within TCP connections, the physical locations of over 15\% of Ethereum validator nodes could be identified.\cite{heimbach2025}
+While the impact is mitigated for users relying on RPC, further research by Heimbach et al. (2025) demonstrated that by analyzing proof messages (Attestations) within TCP connections, the physical locations of over 15\% of Ethereum validator nodes could be identified \cite{heimbach2025}.
 \item \textbf{"Specific Leakage in ERC-20 Graphs":}
 The transfer patterns of stablecoins exhibit significant topological differences from native ETH patterns, providing entry points for specific analyses.
 Josenhans et al. (2025) noted in their analysis of ERC-20 scam token networks that the peel chain pattern—where large funds gradually diminish through successive transfers, akin to peeling an onion—is highly prevalent in token laundering. \cite{josenhans2025}
@@ -146,7 +184,7 @@ Using graph embedding technology, researchers achieved 88.7\% accuracy in identi
 For stablecoins, this pattern typically indicates users attempting to obscure fund paths via “bridge” addresses.
 \end{itemize}
 
-\subsection{Privacy Impact}
+\subsection{Impact}
 The combined application of the aforementioned attack mechanisms has resulted in stablecoin users facing a multidimensional collapse of privacy:
 
 \paragraph{Physical Identity Exposure}
@@ -196,16 +234,16 @@ Following the sanctions imposed on Tornado Cash, Vitalik Buterin, Jacob Illum et
 
 Collateralized stablecoin systems introduce a distinct privacy surface compared with simple token transfers: risk management requires on-chain transparency about positions, yet that same transparency leaks sensitive financial information. In a typical over-collateralized design, users lock collateral into a vault (or equivalent position) and mint stablecoins as debt. The protocol continuously compares the vault’s collateral-to-debt ratio against a liquidation threshold; if the position becomes undercollateralized, it is liquidated via an on-chain auction mechanism. MakerDAO’s Multi-Collateral Dai (MCD) system provides a canonical example of this design: users generate Dai by depositing approved collateral into Maker Vaults, and undercollateralized Vaults are liquidated through automated protocol auctions involving external bidders (``Keepers'') \cite{maker2020mcd}.
 
-\subsection{Threat model}
+\subsection{Threat Model}
 The primary adversaries are passive observers and economically-motivated actors who can read and react to public state: blockchain analytics firms, competing market participants, liquidation bots/keepers, MEV searchers, and counterparties. Their capabilities include (i) reading complete on-chain vault state (collateral type, collateral amount, debt, historical adjustments), (ii) monitoring mempools to anticipate liquidations and position management transactions, and (iii) correlating addresses across protocols and exchanges using tagging datasets. Unlike privacy leakage in transfers (which often depends on address reuse), collateralized stablecoin leakage is amplified by the protocol itself publishing risk-relevant state.
 
 \subsection{Leakage mechanisms}
 First, \emph{position transparency} makes strategy inference straightforward: a vault’s debt, collateral composition, and safety margin reveal leverage preferences, liquidation tolerance, and timing strategies. Over time, these observations enable profiling (e.g., ``this address increases debt after price rallies'' or ``this institution maintains a narrow buffer''). Second, \emph{liquidation process transparency} creates a targeting surface. In MCD, vaults that cross the liquidation ratio are liquidated via auctions where bidders compete to purchase collateral with Dai, and the auction can evolve into a reverse auction to minimize collateral sold, returning leftovers to the original owner when possible \cite{maker2020mcd}. Because liquidation eligibility is computable from public data and oracle prices, third parties can identify ``weak'' positions and time adversarial actions: monitoring near-threshold vaults, front-running debt repayments, or concentrating bidding behavior around particular victims. Third, \emph{cross-protocol linkability} arises because collateral and stablecoins flow through multiple DeFi protocols. Even if a user attempts to obfuscate transfer history, vault interactions (mint, repay, withdraw) form recognizable interaction patterns that can be clustered with other activities. Finally, side channels such as mempool visibility and RPC metadata can reveal the timing and intent of vault adjustments, enabling correlation with off-chain events.
 
-\subsection{Impact and ramifications}
+\subsection{Impact}
 These leakages harm both retail and institutional adopters. At the user level, public exposure of ``how close to liquidation'' a vault is can increase expected losses: adversaries can extract value by racing liquidations, influencing auction dynamics, or exploiting execution ordering (MEV). At the market-structure level, transparency can deter institutions from using decentralized stablecoin minting for treasury management because it reveals balance sheet exposure and risk posture. More broadly, protocol-level transparency creates a privacy--stability tension: the system benefits from verifiable solvency and observable risk, but individual users incur confidentiality costs. This tension can push high-value users toward centralized venues or private settlement, reducing the open stablecoin ecosystem’s liquidity and composability.
 
-\subsection{Mitigation strategies}
+\subsection{Mitigations}
 A natural direction is to hide \emph{position details} while retaining \emph{verifiable constraints}. One approach is zero-knowledge (ZK) proofs that attest to correctness without revealing the underlying values. Zerocash demonstrates how zk-SNARKs can be used to prove validity of complex ledger statements while hiding origin, destination, and amount information \cite{ben2014zerocash}. While stablecoin vault constraints differ from payment constraints, the same principle applies: a user could prove in ZK that (i) their position is well-formed, (ii) the collateralization ratio is above the liquidation threshold, and (iii) any mint/repay operation preserves the protocol’s accounting, without revealing exact collateral or debt. In practice, range proofs are particularly relevant because collateralization checks boil down to inequalities. Bulletproofs provide short, efficient, and aggregatable range proofs with logarithmic proof size, enabling a prover to show a committed value lies in a range without revealing it \cite{bunz2018bulletproofs}. This can support \emph{minimal disclosure} proofs (e.g., proving debt is below a bound, or collateral value exceeds a threshold) that preserve privacy while retaining public verifiability.
 
 Complementary protocol-level mitigations focus on the liquidation pathway. For example, batch auctions, delayed revelation of liquidation targets, and commit--reveal bidding can reduce targeted liquidation and mempool-based sniping, though they must be balanced against price discovery and timely recapitalization. Selective disclosure mechanisms (auditor/view keys) can support compliance and dispute resolution without making position data universally public, but they introduce governance and key-management complexity. Finally, wallet and UX-level measures (address hygiene, avoiding address reuse for vault controllers, privacy-aware RPC usage) reduce cross-protocol correlation but cannot fully address leakage rooted in protocol-required transparency.
@@ -214,8 +252,8 @@ Complementary protocol-level mitigations focus on the liquidation pathway. For e
 In collateralized stablecoin systems, privacy leakage is not merely a byproduct of user behavior; it is structurally induced by on-chain risk management and liquidation transparency. Mitigations should therefore combine cryptographic minimal-disclosure proofs (zk-SNARK-style validity proofs \cite{ben2014zerocash} and efficient range proofs \cite{bunz2018bulletproofs}) with execution-layer and auction-design changes, aiming to preserve both verifiable solvency and user confidentiality.
 \section{Cross-layer and Cross-chain Correlation (L2 and Bridges)}
 
-\subsection{Threat model}
-Stablecoin users nowadays frequently move assets across Layer 1 (L1), Layer 2 (L2), and cross-chain bridges for payments, liquidity management, and settlement. These transfers are often routine and repeated, making them observable over time. We consider an malicious-user who can monitor public on-chain data across multiple blockchains, including bridge contract events and rollup batch submissions, and correlate these observations across domains.
+\subsection{Threat Model}
+Stablecoin users nowadays frequently move assets across Layer 1 (L1), Layer 2 (L2), and cross-chain bridges for payments, liquidity management, and settlement. These transfers are often routine and repeated, making them observable over time. We consider a malicious user who can monitor public on-chain data across multiple blockchains, including bridge contract events and rollup batch submissions, and correlate these observations across domains.
 Beyond raw on-chain records, this user may also exploit coarse-grained external signals, such as transaction timing regularities and commonly followed transfer conventions. When combined, these signals strengthen cross-domain inference. Recent studies show that publicly available bridge and rollup data alone are sufficient to support large-scale linkage analysis across chains and layers, even without privileged access or insider information~\cite{tyan2025,kyan2025}.
 
 \subsection{Attack mechanisms}
@@ -234,6 +272,9 @@ A second direction focuses on compliance-friendly privacy mechanisms, which are 
 \section{Compliance-Driven Identity Disclosure}
 
 Within digital asset markets, fiat-pegged stablecoins such as Tether (USDT) and USD Coin (USDC) have increasingly replaced direct fiat currency pairs as the dominant medium of exchange and settlement layer. Recent evidence suggests that stablecoin-denominated trading accounts for approximately 80\% of total cryptocurrency trading volume, underscoring their central role in the digital asset ecosystem \cite{waller2025,theblock2025}. This structural shift positions stablecoins as de facto on-ramps and off-ramps for digital assets, thereby amplifying concerns surrounding privacy erosion and compliance-driven control. In this section, we will use USDT as a case study, to examine the divergence between original design assumptions and current operational reality, followed by a discussion of proposed mitigation approaches.
+
+\subsection{Threat Model}
+In this section, the main adversary is a \emph{privileged compliance actor}, including stablecoin issuers and regulated intermediaries (VASPs) that can combine on-chain observability with off-chain identity datasets (KYC records) and administrative controls (e.g., freezing or blacklisting). We also consider regulators and analytics firms that rely on these compliance datasets to link transactions to real-world entities.
 
 \subsection{Problem: Privacy, KYC, and Regulatory Drift in USDT}
 
@@ -260,7 +301,7 @@ While no single approach fully resolves the fundamental privacy-regulation tensi
 \section{Conclusion}
 Stablecoins are now used for payments, settlement, and DeFi minting. This paper shows a simple point: stablecoin privacy does not fail only because users make mistakes. It also fails because the system is built to be transparent.
 
-We discussed four types of privacy risks. First, transfers are easy to trace on account-based chains. ERC-20 logs and address reuse make linkage cheap. Graph clustering and RPC timing signals can also connect on-chain activity to real-world identities \cite{victor2020,wang2025}. This matters for payroll, merchant settlement, and OTC trades, because repeated payments quickly become a profile. Second, collateralized stablecoins expose positions by design. Vault states, liquidation thresholds, and auctions reveal how users manage leverage and risk. This can attract bots and MEV-driven behavior, and it can raise expected losses near liquidation \cite{maker2020mcd}. Third, moving funds across L1, L2, and bridges does not automatically protect privacy. Bridge events act like anchors. Timing and amount matching can reconnect the path across domains \cite{tyan2025,kyan2025}. Fourth, compliance adds another privacy layer that is specific to stablecoins. Issuers and intermediaries often hold KYC records. They can also freeze or blacklist addresses. So on-chain pseudonyms can become weak in practice under AML and sanctions regimes \cite{finCEN2019,fatf2021,ofac2021,micar2023}.
+We discussed four types of privacy leakage. First, transfers are easy to trace on account-based chains. ERC-20 logs and address reuse make linkage cheap. Graph clustering and RPC timing signals can also connect on-chain activity to real-world identities \cite{victor2020,wang2025}. This matters for payroll, merchant settlement, and OTC trades, because repeated payments quickly become a profile. Second, collateralized stablecoins expose positions by design. Vault states, liquidation thresholds, and auctions reveal how users manage leverage and risk. This can attract bots and MEV-driven behavior, and it can raise expected losses near liquidation \cite{maker2020mcd}. Third, moving funds across L1, L2, and bridges does not automatically protect privacy. Bridge events act like anchors. Timing and amount matching can reconnect the path across domains \cite{tyan2025,kyan2025}. Fourth, compliance adds another privacy layer that is specific to stablecoins. Issuers and intermediaries often hold KYC records. They can also freeze or blacklist addresses. So on-chain pseudonyms can become weak in practice under AML and sanctions regimes \cite{finCEN2019,fatf2021,ofac2021,micar2023}.
 
 These risks point to a trade-off that is hard to avoid. Privacy is good for users. Auditability is good for trust and oversight. Risk management needs observability, especially for collateral and liquidation. Regulation also pushes systems toward disclosure. If a design maximizes transparency, privacy collapses. If a design maximizes secrecy, accountability becomes harder. So the real goal is to set boundaries and reduce unnecessary leakage. Systems should hide what is not needed, and prove what must be true. Selective disclosure ideas move in this direction \cite{sahu2024sede,duffie2025}.
 
